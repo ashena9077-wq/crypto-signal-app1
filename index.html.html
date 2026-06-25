@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crypto Pulse 15/30</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0b0e14;
+            color: #e0e4ec;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: #141a24;
+            border-radius: 28px;
+            padding: 20px 18px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid #2a3344;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #f7931a, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .badge {
+            background: #1f2a3a;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            color: #8c9db5;
+            border: 1px solid #2e3b50;
+        }
+
+        .select-box {
+            background: #1a232f;
+            border-radius: 16px;
+            padding: 6px 14px;
+            margin-bottom: 18px;
+            border: 1px solid #2a3649;
+        }
+
+        .select-box select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #e0e4ec;
+            font-size: 16px;
+            padding: 10px 0;
+            outline: none;
+            font-weight: 600;
+        }
+
+        .select-box select option {
+            background: #141a24;
+            color: #e0e4ec;
+        }
+
+        .timeframe-toggle {
+            display: flex;
+            background: #0f1620;
+            border-radius: 40px;
+            padding: 4px;
+            margin-bottom: 22px;
+            border: 1px solid #26303f;
+        }
+
+        .timeframe-toggle button {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 30px;
+            background: transparent;
+            color: #8c9db5;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timeframe-toggle button.active {
+            background: #f7931a;
+            color: #0b0e14;
+            box-shadow: 0 4px 15px rgba(247, 147, 26, 0.3);
+        }
+
+        .signal-card {
+            background: #0f1620;
+            border-radius: 24px;
+            padding: 24px 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #26303f;
+            transition: all 0.5s ease;
+        }
+
+        .signal-label {
+            font-size: 14px;
+            color: #8c9db5;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .signal-status {
+            font-size: 32px;
+            font-weight: 900;
+            margin: 8px 0 4px;
+        }
+
+        .signal-status.buy {
+            color: #00d4aa;
+        }
+        .signal-status.sell {
+            color: #ff5e7a;
+        }
+        .signal-status.neutral {
+            color: #f5a623;
+        }
+
+        .signal-confidence {
+            font-size: 13px;
+            color: #8c9db5;
+            background: #1a232f;
+            padding: 4px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        .price-display {
+            display: flex;
+            justify-content: space-between;
+            background: #0f1620;
+            padding: 14px 18px;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            border: 1px solid #1f2a3a;
+        }
+
+        .price-item {
+            text-align: center;
+        }
+        .price-item .label {
+            font-size: 11px;
+            color: #6a7d99;
+        }
+        .price-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 4px;
+            color: #f0f4fc;
+        }
+        .price-item .value.green {
+            color: #00d4aa;
+        }
+        .price-item .value.red {
+            color: #ff5e7a;
+        }
+
+        .indicators-row {
+            display: flex;
+            gap: 10px;
+            margin: 16px 0 10px;
+        }
+
+        .indicator-box {
+            flex: 1;
+            background: #0f1620;
+            border-radius: 14px;
+            padding: 12px 4px;
+            text-align: center;
+            border: 1px solid #1f2a3a;
+        }
+
+        .indicator-box .label {
+            font-size: 10px;
+            color: #6a7d99;
+            text-transform: uppercase;
+        }
+        .indicator-box .number {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .last-update {
+            text-align: center;
+            font-size: 11px;
+            color: #4e5f78;
+            margin-top: 18px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1f2a3a;
+            border-top: 2px solid #f7931a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-refresh {
+            background: #1f2a3a;
+            border: none;
+            color: #e0e4ec;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.2s;
+            border: 1px solid #2e3b50;
+        }
+        .btn-refresh:active {
+            transform: scale(0.95);
+            background: #2a3649;
+        }
+
+        .footer-note {
+            font-size: 10px;
+            color: #3a4a5f;
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid #1a232f;
+            padding-top: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app">
+        <!-- هدر -->
+        <div class="header">
+            <h1>⚡ Crypto Pulse</h1>
+            <span class="badge">15/30</span>
+        </div>
+
+        <!-- انتخاب ارز -->
+        <div class="select-box">
+            <select id="symbolSelect">
+                <option value="BTCUSDT">BTC / USDT</option>
+                <option value="ETHUSDT">ETH / USDT</option>
+                <option value="SOLUSDT">SOL / USDT</option>
+                <option value="BNBUSDT">BNB / USDT</option>
+                <option value="XRPUSDT">XRP / USDT</option>
+            </select>
+        </div>
+
+        <!-- سوئیچ تایم‌فریم -->
+        <div class="timeframe-toggle">
+            <button id="tf15" class="active">۱۵ دقیقه</button>
+            <button id="tf30">۳۰ دقیقه</button>
+        </div>
+
+        <!-- کارت سیگنال اصلی -->
+        <div class="signal-card" id="signalCard">
+            <div class="signal-label">⚡ سیگنال معاملاتی</div>
+            <div class="signal-status neutral" id="signalStatus">در حال تحلیل...</div>
+            <div class="signal-confidence" id="confidenceBadge">اطمینان: --%</div>
+        </div>
+
+        <!-- قیمت لحظه‌ای -->
+        <div class="price-display">
+            <div class="price-item">
+                <div class="label">قیمت فعلی</div>
+                <div class="value" id="currentPrice">---</div>
+            </div>
+            <div class="price-item">
+                <div class="label">تغییر ۲۴h</div>
+                <div class="value" id="priceChange">---</div>
+            </div>
+        </div>
+
+        <!-- اندیکاتورها -->
+        <div class="indicators-row">
+            <div class="indicator-box">
+                <div class="label">RSI</div>
+                <div class="number" id="rsiValue">--</div>
+            </div>
+            <div class="indicator-box">
+                <div class="label">EMA 21</div>
+                <div class="number" id="emaValue">--</div>
+            </div>
+            <div class="indicator-box">
+                <div class="label">حجم</div>
+                <div class="number" id="volumeValue">--</div>
+            </div>
+        </div>
+
+        <!-- دکمه رفرش و وضعیت -->
+        <div style="display: flex; justify-content: center; gap: 12px; align-items: center;">
+            <button class="btn-refresh" id="refreshBtn">🔄 به‌روزرسانی</button>
+            <span class="last-update" id="updateTime">--:--</span>
+        </div>
+
+        <div class="footer-note">
+            ⚠️ سیگنال‌ها جنبه مشاوره‌ای دارند • مدیریت سرمایه ضروری است
+        </div>
+    </div>
+
+    <script>
+        // ======================== تنظیمات اولیه ========================
+        const BASE_URL = 'https://api.binance.com/api/v3';
+        let currentSymbol = 'BTCUSDT';
+        let currentInterval = '15m'; // 15m یا 30m
+        let candlestickData = [];
+        let lastPrice = 0;
+
+        // المان‌های DOM
+        const symbolSelect = document.getElementById('symbolSelect');
+        const tf15Btn = document.getElementById('tf15');
+        const tf30Btn = document.getElementById('tf30');
+        const signalStatus = document.getElementById('signalStatus');
+        const confidenceBadge = document.getElementById('confidenceBadge');
+        const currentPriceEl = document.getElementById('currentPrice');
+        const priceChangeEl = document.getElementById('priceChange');
+        const rsiValueEl = document.getElementById('rsiValue');
+        const emaValueEl = document.getElementById('emaValue');
+        const volumeValueEl = document.getElementById('volumeValue');
+        const updateTimeEl = document.getElementById('updateTime');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const signalCard = document.getElementById('signalCard');
+
+        // ======================== توابع محاسباتی ========================
+
+        // محاسبه RSI با دوره ۱۴
+        function calculateRSI(data, period = 14) {
+            if (data.length < period + 1) return 50;
+            let gains = 0,
+                losses = 0;
+            for (let i = 1; i <= period; i++) {
+                const diff = data[i].close - data[i - 1].close;
+                if (diff >= 0) gains += diff;
+                else losses -= diff;
+            }
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+            for (let i = period + 1; i < data.length; i++) {
+                const diff = data[i].close - data[i - 1].close;
+                if (diff >= 0) {
+                    avgGain = (avgGain * (period - 1) + diff) / period;
+                    avgLoss = (avgLoss * (period - 1)) / period;
+                } else {
+                    avgGain = (avgGain * (period - 1)) / period;
+                    avgLoss = (avgLoss * (period - 1) - diff) / period;
+                }
+            }
+            if (avgLoss === 0) return 100;
+            const rs = avgGain / avgLoss;
+            return 100 - (100 / (1 + rs));
+        }
+
+        // محاسبه EMA با دوره ۲۱
+        function calculateEMA(data, period = 21) {
+            if (data.length < period) return data[data.length - 1]?.close || 0;
+            const k = 2 / (period + 1);
+            let ema = data[0].close;
+            for (let i = 1; i < data.length; i++) {
+                ema = data[i].close * k + ema * (1 - k);
+            }
+            return ema;
+        }
+
+        // ======================== دریافت داده از بایننس ========================
+
+        async function fetchCandles(symbol, interval) {
+            const url = `${BASE_URL}/klines?symbol=${symbol}&interval=${interval}&limit=100`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('خطا در دریافت داده');
+            const raw = await res.json();
+            return raw.map(item => ({
+                open: parseFloat(item[1]),
+                high: parseFloat(item[2]),
+                low: parseFloat(item[3]),
+                close: parseFloat(item[4]),
+                volume: parseFloat(item[5])
+            }));
+        }
+
+        async function fetchTicker(symbol) {
+            const url = `${BASE_URL}/ticker/24hr?symbol=${symbol}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('خطا در دریافت قیمت');
+            const data = await res.json();
+            return {
+                price: parseFloat(data.lastPrice),
+                change: parseFloat(data.priceChangePercent)
+            };
+        }
+
+        // ======================== تولید سیگنال ========================
+
+        function generateSignal(candles) {
+            if (!candles || candles.length < 30) {
+                return { status: 'neutral', text: '⏳ داده کافی نیست', confidence: 0 };
+            }
+
+            const rsi = calculateRSI(candles);
+            const ema = calculateEMA(candles);
+            const lastClose = candles[candles.length - 1].close;
+
+            let status, text, confidence = 0;
+
+            // منطق ترکیبی RSI + EMA
+            const isBullish = lastClose > ema;
+            const isBearish = lastClose < ema;
+
+            if (rsi < 35 && isBullish) {
+                status = 'buy';
+                text = '🟢 خرید (قوی)';
+                confidence = Math.min(95, 60 + (35 - rsi) * 1.2);
+            } else if (rsi > 65 && isBearish) {
+                status = 'sell';
+                text = '🔴 فروش (قوی)';
+                confidence = Math.min(95, 60 + (rsi - 65) * 1.2);
+            } else if (rsi < 45 && isBullish) {
+                status = 'buy';
+                text = '🟡 خرید (ضعیف)';
+                confidence = 45 + (45 - rsi) * 0.8;
+            } else if (rsi > 55 && isBearish) {
+                status = 'sell';
+                text = '🟡 فروش (ضعیف)';
+                confidence = 45 + (rsi - 55) * 0.8;
+            } else {
+                status = 'neutral';
+                text = '⚪ خنثی (بدون سیگنال)';
+                confidence = 30;
+            }
+
+            return {
+                status,
+                text,
+                confidence: Math.min(99, Math.max(10, Math.round(confidence))),
+                rsi: Math.round(rsi),
+                ema: Math.round(ema),
+                lastClose: lastClose
+            };
+        }
+
+        // ======================== بروزرسانی UI ========================
+
+        async function updateAll() {
+            try {
+                // نمایش لودینگ
+                signalStatus.textContent = '⏳ در حال تحلیل...';
+                signalStatus.className = 'signal-status neutral';
+                confidenceBadge.textContent = 'اطمینان: --%';
+
+                // دریافت داده‌ها
+                const [candles, ticker] = await Promise.all([
+                    fetchCandles(currentSymbol, currentInterval),
+                    fetchTicker(currentSymbol)
+                ]);
+
+                candlestickData = candles;
+                lastPrice = ticker.price;
+
+                // نمایش قیمت‌ها
+                currentPriceEl.textContent = `$${ticker.price.toFixed(2)}`;
+                const changeClass = ticker.change >= 0 ? 'green' : 'red';
+                priceChangeEl.textContent = `${ticker.change >= 0 ? '+' : ''}${ticker.change.toFixed(2)}%`;
+                priceChangeEl.className = `value ${changeClass}`;
+
+                // محاسبه سیگنال
+                const signal = generateSignal(candles);
+
+                // نمایش سیگنال
+                signalStatus.textContent = signal.text;
+                signalStatus.className = `signal-status ${signal.status}`;
+                confidenceBadge.textContent = `اطمینان: ${signal.confidence}%`;
+
+                // نمایش اندیکاتورها
+                rsiValueEl.textContent = signal.rsi || '--';
+                emaValueEl.textContent = signal.ema ? `$${signal.ema.toFixed(2)}` : '--';
+                const vol = candles[candles.length - 1]?.volume || 0;
+                volumeValueEl.textContent = vol > 1000 ? `${(vol / 1000).toFixed(1)}K` : vol.toFixed(0);
+
+                // زمان بروزرسانی
+                const now = new Date();
+                updateTimeEl.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+                // تغییر رنگ کارت سیگنال
+                signalCard.style.borderColor = signal.status === 'buy' ? '#00d4aa' :
+                    signal.status === 'sell' ? '#ff5e7a' : '#26303f';
+
+            } catch (error) {
+                console.error(error);
+                signalStatus.textContent = '⚠️ خطا در دریافت داده';
+                signalStatus.className = 'signal-status neutral';
+                confidenceBadge.textContent = 'اطمینان: ۰%';
+            }
+        }
+
+        // ======================== رویدادها ========================
+
+        // تغییر تایم‌فریم
+        tf15Btn.addEventListener('click', () => {
+            tf15Btn.classList.add('active');
+            tf30Btn.classList.remove('active');
+            currentInterval = '15m';
+            updateAll();
+        });
+
+        tf30Btn.addEventListener('click', () => {
+            tf30Btn.classList.add('active');
+            tf15Btn.classList.remove('active');
+            currentInterval = '30m';
+            updateAll();
+        });
+
+        // تغییر نماد
+        symbolSelect.addEventListener('change', (e) => {
+            currentSymbol = e.target.value;
+            updateAll();
+        });
+
+        // دکمه رفرش
+        refreshBtn.addEventListener('click', updateAll);
+
+        // ======================== اجرای اولیه ========================
+
+        // بارگذاری اولیه
+        updateAll();
+
+        // آپدیت خودکار هر ۶۰ ثانیه
+        setInterval(updateAll, 60000);
+
+        // ======================== پشتیبانی از AppsGeyser ========================
+        // این کد برای اجرا در WebView بهینه شده و از CORS بایننس پشتیبانی می‌کند.
+        console.log('🚀 Crypto Pulse 15/30 Loaded successfully!');
+    </script>
+
+</body>
+</html>
